@@ -6,41 +6,53 @@
 // The idea is to fetch the last 20 commits in the history
 // of each of the last 10 commits that are displayed.
 async function fetchFurther(commits, allCommits, heads, pageNo, branchNames) {
-  // commits array just contains the last 10 commits so that their 
+  // commits array just contains the last 10 commits so that their
   // 10 levels of history can be fetched.
 
   // Adding the loader to the UI
   var commitsOl = document.getElementById("commitsOl");
-  var loadingIcon = chrome.runtime.getURL('html/commitsLoading.html');
-  fetch(loadingIcon).then(response => response.text()).then(loadingIconText => {
-    var tempDiv = document.createElement('div');
-    tempDiv.innerHTML = loadingIconText;
-    var newContent = tempDiv.firstChild;
-    commitsOl.appendChild(newContent);
-  });
+  var loadingIcon = chrome.runtime.getURL("html/commitsLoading.html");
+  fetch(loadingIcon)
+    .then((response) => response.text())
+    .then((loadingIconText) => {
+      var tempDiv = document.createElement("div");
+      tempDiv.innerHTML = loadingIconText;
+      var newContent = tempDiv.firstChild;
+      commitsOl.appendChild(newContent);
+    });
 
   var presentUrl = window.location.href;
-  var repoOwner = presentUrl.split('/')[3];
-  var repoName = presentUrl.split('/')[4];
-  var queryBeginning = `
-    query { 
+  var repoOwner = presentUrl.split("/")[3];
+  var repoName = presentUrl.split("/")[4];
+  var queryBeginning =
+    `
+    query {
         rateLimit {
             limit
             cost
             remaining
             resetAt
           }
-        repository(owner:"`+ repoOwner + `", name: "` + repoName + `") {`;
+        repository(owner:"` +
+    repoOwner +
+    `", name: "` +
+    repoName +
+    `") {`;
   var queryContent = queryBeginning;
   if (commits.length < 10) {
-    return (false);
+    return false;
   }
   var lastTenCommits = commits.slice(commits.length - 20, commits.length);
   for (var i = 0; i < lastTenCommits.length; i++) {
-    queryContent += `
-        commit`+ i + `: object(oid: "` + lastTenCommits[i].oid + `") {
+    queryContent +=
+      `
+        commit` +
+      i +
+      `: object(oid: "` +
+      lastTenCommits[i].oid +
+      `") {
             ... on Commit{
-                
+
                 history(first: 20) {
                     edges {
                         node {
@@ -48,7 +60,7 @@ async function fetchFurther(commits, allCommits, heads, pageNo, branchNames) {
                                 oid
                                 messageHeadlineHTML
                                 committedDate
-                            }  
+                            }
                         }
                     }
                 }
@@ -59,27 +71,27 @@ async function fetchFurther(commits, allCommits, heads, pageNo, branchNames) {
   var endpoint = "https://api.github.com/graphql";
   var headers = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer " + getLocalToken()
+    Authorization: "Bearer " + getLocalToken(),
   };
   var body = {
-    query: queryContent
+    query: queryContent,
   };
   var response = await fetch(endpoint, {
     method: "POST",
     headers: headers,
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
-  if ((response.status != 200 && response.status != 201)) {
+  if (response.status != 200 && response.status != 201) {
     console.log("--ERROR FETCHING GRAPHQL--");
     addAuthorizationPrompt("Failed to fetch commits. Make sure your GitHub account has access to the repository.");
-    return (false);
+    return false;
   }
   var data = await response.json();
   console.log(data);
   if (data.error) {
     console.log("--ERROR FETCHING GRAPHQL--");
     addAuthorizationPrompt("Failed to fetch commits. Make sure your GitHub account has access to the repository.");
-    return (false);
+    return false;
   }
   var newlyFetchedCommits = data.data.repository;
   for (var newCommitId in newlyFetchedCommits) {
@@ -101,8 +113,7 @@ async function fetchFurther(commits, allCommits, heads, pageNo, branchNames) {
   for (var newCommit of allCommits) {
     if (commitObject[newCommit.oid] == undefined) {
       commitObject[newCommit.oid] = newCommit;
-    }
-    else {
+    } else {
       for (var parameter in newCommit) {
         commitObject[newCommit.oid][parameter] = newCommit[parameter];
       }
@@ -118,7 +129,7 @@ async function fetchFurther(commits, allCommits, heads, pageNo, branchNames) {
     return b.committedDate - a.committedDate;
   });
   pageNo += 1;
-  var commitsToShow = (allCommits.slice(0, 10 * pageNo));
+  var commitsToShow = allCommits.slice(0, 10 * pageNo);
   await showCommits(commitsToShow, branchNames, allCommits, heads, pageNo);
   showLegend(heads);
 }

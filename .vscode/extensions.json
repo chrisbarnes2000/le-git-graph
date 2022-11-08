@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "yzhang.markdown-all-in-one",
+    "aaron-bond.better-comments",
+    "streetsidesoftware.code-spell-checker",
+    "dbaeumer.vscode-eslint",
+    "visualstudioexptteam.vscodeintellicode",
+    "eamodio.gitlens",
+    "wayou.vscode-todo-highlight",
+    "vscode-icons-team.vscode-icons",
+    "oderwat.indent-rainbow"
+  ]
+}

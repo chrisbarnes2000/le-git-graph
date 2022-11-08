@@ -1,15 +1,64 @@
 // Draws a curve between two given [commit] points
 async function drawCurve(container, startx, starty, endx, endy, color) {
-  var firstLineEndY = starty + ((endy - starty - 40) / 2);
+  var firstLineEndY = starty + (endy - starty - 40) / 2;
   var secondLineStartY = firstLineEndY + 40;
-  container.innerHTML += '<path d = "M ' + startx + ' ' + starty + ' L ' + startx + ' ' + firstLineEndY + ' C ' + startx + ' ' + (parseInt(firstLineEndY) + 20) + ' , ' + endx + ' ' + (parseInt(firstLineEndY) + 20) + ' , ' + endx + ' ' + (parseInt(firstLineEndY) + 40) + ' L ' + endx + ' ' + endy + '" stroke="' + color + '" stroke-width="1" fill = "#00000000"/>';
+  container.innerHTML +=
+    '<path d = "M ' +
+    startx +
+    " " +
+    starty +
+    " L " +
+    startx +
+    " " +
+    firstLineEndY +
+    " C " +
+    startx +
+    " " +
+    (parseInt(firstLineEndY) + 20) +
+    " , " +
+    endx +
+    " " +
+    (parseInt(firstLineEndY) + 20) +
+    " , " +
+    endx +
+    " " +
+    (parseInt(firstLineEndY) + 40) +
+    " L " +
+    endx +
+    " " +
+    endy +
+    '" stroke="' +
+    color +
+    '" stroke-width="1" fill = "#00000000"/>';
 }
 
 // Draws an indication that there are parent commits, but not
 // shown on this page, because the parents are too old.
 async function drawDottedLine(container, startx, starty, color) {
-  container.innerHTML += '<path d = "M ' + startx + ' ' + starty + ' L ' + startx + ' ' + (starty + 10) + '" stroke="' + color + '" stroke-width="1" fill = "#00000000"/>';
-  container.innerHTML += '<path d = "M ' + startx + ' ' + (starty + 10) + ' L ' + startx + ' ' + (starty + 30) + '" stroke="' + color + '" stroke-width="1" stroke-dasharray="2,2" fill = "#00000000"/>';
+  container.innerHTML +=
+    '<path d = "M ' +
+    startx +
+    " " +
+    starty +
+    " L " +
+    startx +
+    " " +
+    (starty + 10) +
+    '" stroke="' +
+    color +
+    '" stroke-width="1" fill = "#00000000"/>';
+  container.innerHTML +=
+    '<path d = "M ' +
+    startx +
+    " " +
+    (starty + 10) +
+    " L " +
+    startx +
+    " " +
+    (starty + 30) +
+    '" stroke="' +
+    color +
+    '" stroke-width="1" stroke-dasharray="2,2" fill = "#00000000"/>';
 }
 
 // Draws the graph into the graphSvg element. (Where the graph is supposed to be drawn)
@@ -26,11 +75,11 @@ async function drawGraph(commits, commitDict) {
   commitsGraphContainer.style.height = commitsContainerHeight;
   var yPos = 0;
 
-  // indexArray acts as a two dimensional array, which represents the structure of 
-  // the whole graph. indexArray[i][j] represents which line should occupy the 
+  // indexArray acts as a two dimensional array, which represents the structure of
+  // the whole graph. indexArray[i][j] represents which line should occupy the
   // jth horizontal position on the ith line (next to the ith commit)
   var indexArray = Array.from(Array(commits.length), () => new Array(0));
-  var lineColors = Array.from('#000000', () => undefined);
+  var lineColors = Array.from("#000000", () => undefined);
   for (var commit of commits) {
     lineColors[commit.lineIndex] = commit.color;
   }
@@ -72,13 +121,21 @@ async function drawGraph(commits, commitDict) {
     yPos += (thisCommitItem.offsetHeight - 1) / 2;
     // Drawing the commits dots. (This is more of a dummy and will be redrawn so that lines appear below circles)
     // The purpose of this first set of circles is to easily query the position of the commit dot.
-    commitsGraphContainer.innerHTML += '<circle cx="' + (30 + (commitXIndex * 14)) + '" cy="' + yPos + '" r="1" fill="' + commit.color + '" circlesha = "' + commit.oid + '"/>';
+    commitsGraphContainer.innerHTML +=
+      '<circle cx="' +
+      (30 + commitXIndex * 14) +
+      '" cy="' +
+      yPos +
+      '" r="1" fill="' +
+      commit.color +
+      '" circlesha = "' +
+      commit.oid +
+      '"/>';
     yPos += thisCommitItem.offsetHeight / 2;
   }
 
-
   // Curve for connecting existing commits
-  for (var i = 0; i < (commits.length - 1); i++) {
+  for (var i = 0; i < commits.length - 1; i++) {
     var commit = commits[i];
     var hasVisibleParents = false;
     for (parentItem of commit.parents) {
@@ -87,7 +144,7 @@ async function drawGraph(commits, commitDict) {
       var thisy = document.querySelectorAll('[circlesha="' + commit.oid + '"]')[0].cy.baseVal.value;
       if (parent != undefined) {
         hasVisibleParents = true;
-        var nextx = 30 + (14 * (indexArray[i + 1].indexOf(parent.lineIndex)));
+        var nextx = 30 + 14 * indexArray[i + 1].indexOf(parent.lineIndex);
         var nexty = document.querySelectorAll('[circlesha="' + commits[i + 1].oid + '"]')[0].cy.baseVal.value;
         drawCurve(commitsGraphContainer, thisx, thisy, nextx, nexty, lineColors[parent.lineIndex]);
       }
@@ -101,12 +158,12 @@ async function drawGraph(commits, commitDict) {
 
   // Curve for maintaining continuity of lines
   for (var thisLineIndex = 0; thisLineIndex < commits.length; thisLineIndex++) {
-    for (var i = 0; i < (commits.length - 1); i++) {
+    for (var i = 0; i < commits.length - 1; i++) {
       var commit = commits[i];
       if (indexArray[i].includes(thisLineIndex) && indexArray[i + 1].includes(thisLineIndex)) {
-        var thisx = 30 + (14 * (indexArray[i].indexOf(thisLineIndex)));
+        var thisx = 30 + 14 * indexArray[i].indexOf(thisLineIndex);
         var thisy = document.querySelectorAll('[circlesha="' + commit.oid + '"]')[0].cy.baseVal.value;
-        var nextx = 30 + (14 * (indexArray[i + 1].indexOf(thisLineIndex)));
+        var nextx = 30 + 14 * indexArray[i + 1].indexOf(thisLineIndex);
         var nexty = document.querySelectorAll('[circlesha="' + commits[i + 1].oid + '"]')[0].cy.baseVal.value;
         drawCurve(commitsGraphContainer, thisx, thisy, nextx, nexty, lineColors[thisLineIndex]);
       }
@@ -118,8 +175,26 @@ async function drawGraph(commits, commitDict) {
   for (var commit of commits) {
     var thisCommitItem = document.querySelectorAll('[circlesha="' + commit.oid + '"]')[0];
     if (commit.isHead) {
-      commitsGraphContainer.innerHTML += '<circle cx="' + thisCommitItem.getAttribute("cx") + '" cy="' + thisCommitItem.getAttribute("cy") + '" r="7" stroke="' + commit.color + '" fill = "#00000000" circlesha = "' + commit.oid + '"/>';
+      commitsGraphContainer.innerHTML +=
+        '<circle cx="' +
+        thisCommitItem.getAttribute("cx") +
+        '" cy="' +
+        thisCommitItem.getAttribute("cy") +
+        '" r="7" stroke="' +
+        commit.color +
+        '" fill = "#00000000" circlesha = "' +
+        commit.oid +
+        '"/>';
     }
-    commitsGraphContainer.innerHTML += '<circle cx="' + thisCommitItem.getAttribute("cx") + '" cy="' + thisCommitItem.getAttribute("cy") + '" r="4" fill="' + commit.color + '" circlesha = "' + commit.oid + '"/>';
+    commitsGraphContainer.innerHTML +=
+      '<circle cx="' +
+      thisCommitItem.getAttribute("cx") +
+      '" cy="' +
+      thisCommitItem.getAttribute("cy") +
+      '" r="4" fill="' +
+      commit.color +
+      '" circlesha = "' +
+      commit.oid +
+      '"/>';
   }
 }

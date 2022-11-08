@@ -5,9 +5,7 @@
   "manifest_version": 3,
   "content_scripts": [
     {
-      "matches": [
-        "*://*.github.com/*"
-      ],
+      "matches": ["*://*.github.com/*"],
       "js": [
         "js/showLegend.js",
         "js/drawGraph.js",
@@ -28,18 +26,12 @@
       "run_at": "document_end"
     },
     {
-      "matches": [
-        "*://*.scaria.dev/github-tree-graph/authorize/"
-      ],
-      "js": [
-        "js/authProcess.js"
-      ],
+      "matches": ["*://*.scaria.dev/github-tree-graph/authorize/"],
+      "js": ["js/authProcess.js"],
       "run_at": "document_end"
     }
   ],
-  "permissions": [
-    "tabs"
-  ],
+  "permissions": ["tabs"],
   "action": {
     "default_icon": {
       "16": "/images/le_git_graph16.png",
@@ -69,9 +61,7 @@
         "html/commitsContainer.html",
         "html/commitItem.html"
       ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "matches": ["<all_urls>"]
     }
   ]
 }

@@ -9,8 +9,8 @@ A browser extension that displays the git graph for any GitHub repository.
 [![Version](https://img.shields.io/badge/Version-1.0.3-green)]()
 
 ## Demo
-![Demo image](https://drive.google.com/uc?export=download&id=12plJnQgqAvSecLz5jrLajojtuRX2aPyZ)
 
+![Demo image](https://drive.google.com/uc?export=download&id=12plJnQgqAvSecLz5jrLajojtuRX2aPyZ)
 
 ## Installation
 
@@ -18,16 +18,15 @@ Install the extension from Chrome Web store
 
 [https://chrome.google.com/webstore/detail/le-git-graph-commits-grap/joggkdfebigddmaagckekihhfncdobff](https://chrome.google.com/webstore/detail/le-git-graph-commits-grap/joggkdfebigddmaagckekihhfncdobff)
 
-
 After installation, open any GitHub repository and a new 'Commits' tab will be visible.
 
 Open the commits tab and follow the prompt to authenticate with your GitHub account.
+
 ## Tech Stack
 
 **Client:** JavaScript, Manifest V3
 
 **Server:** GitHub GraphQL, GitHub OAuth, FireBase Cloud Functions
-
 
 ## Features
 
