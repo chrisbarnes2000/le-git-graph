@@ -1,5 +1,5 @@
 try {
-  self.importScripts("dependancies/firebase-app.js", "dependancies/firebase-database.js");
+  self.importScripts("dependencies/firebase-app.js", "dependencies/firebase-database.js");
 
   const firebaseConfig = {
     apiKey: "AIzaSyAfYmATG88Dsjhe2f-Q8YrMVW1ZRvY6azA",

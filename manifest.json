@@ -7,27 +7,33 @@
     {
       "matches": ["*://*.github.com/*"],
       "js": [
-        "js/showLegend.js",
-        "js/drawGraph.js",
-        "js/fetchFurther.js",
-        "js/showCommitsLoading.js",
-        "js/getLocalToken.js",
-        "js/addAuthorizationPrompt.js",
-        "js/authorisation/oauth2.js",
-        "js/fetchCommits.js",
-        "js/showCommits.js",
-        "js/sortCommits.js",
-        "js/setBranchOptions.js",
-        "js/loadBranchesButton.js",
-        "js/addCommitsButton.js",
-        "js/openCommitsTab.js",
+        "js/authorization/addAuthorizationPrompt.js",
+        "js/authorization/getLocalToken.js",
+        "js/authorization/oauth2.js",
+
+        "js/commits/drawGraph.js",
+        "js/commits/fetchCommits.js",
+        "js/commits/showCommits.js",
+        "js/commits/showCommitsLoading.js",
+        "js/commits/sortCommits.js",
+
+        "js/navigation/file/loadBranchesButton.js",
+        "js/navigation/file/setBranchOptions.js",
+        "js/navigation/file/showLegend.js",
+
+        "js/navigation/pagination/addLoadMoreButton.js",
+        "js/navigation/pagination/fetchFurther.js",
+
+        "js/navigation/repo/addCommitsButton.js",
+        "js/navigation/repo/openCommitsTab.js",
+
         "js/main.js"
       ],
       "run_at": "document_end"
     },
     {
       "matches": ["*://*.scaria.dev/github-tree-graph/authorize/"],
-      "js": ["js/authProcess.js"],
+      "js": ["js/authorization/authProcess.js"],
       "run_at": "document_end"
     }
   ],
