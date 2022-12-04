@@ -15,21 +15,26 @@ try {
   );
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    const githubTokenStream = firebase.database().ref("TokenData/" + browserToken + "/githubToken");
-    const currentTab = (query) => chrome.tabs.query({ active: true, currentWindow: true }, query);
-    const tabMessenger = (message) => chrome.tabs.sendMessage(sender.tab.id, message);
     var browserToken = request.browserToken;
+    var key = `TokenData/${browserToken}/githubToken`;
 
-    tabMessenger({ status: "LISTENING FOR " + `TokenData/${browserToken}/githubToken` });
+    const githubTokenStream = firebase.database().ref(key);
+
+    tabMessenger(sender, { status: `LISTENING FOR ${key}` });
     githubTokenStream.on("value", (snapshot) => {
       var githubToken = snapshot.val();
-      if (githubToken == null) currentTab(() => tabMessenger({ status: "NULL" }));
-      if (githubToken == "FAIL") {
-        tabMessenger({ status: "FAIL" });
-        githubTokenStream.off();
-      } else {
-        currentTab(() => tabMessenger({ status: "SUCCESS", value: githubToken }));
-        githubTokenStream.off();
+      switch (githubToken) {
+        case "FAIL":
+          currentTab(() => tabMessenger(sender, { status: "FAIL" }));
+          githubTokenStream.off();
+          break;
+        case null:
+          currentTab(() => tabMessenger(sender, { status: "NULL" }));
+          break;
+        default:
+          currentTab(() => tabMessenger(sender, { status: "SUCCESS", value: githubToken }));
+          githubTokenStream.off();
+          break;
       }
     });
   });

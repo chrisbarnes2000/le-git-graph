@@ -1,50 +1,47 @@
-function setBranchOptions(branches, selectedBranchNames) {
+const setBranchOptions = (allBranches, selectedBranches) => {
   var branchesContainer = document.getElementById("branches-list-parent");
-  var existingChild = branchesContainer.children[0];
+  var dropdownItem = branchesContainer.children[0];
 
-  // Add each branch to the dropdown list.
-  Array.from(branches).forEach((branch) => {
-    var newChild = existingChild.cloneNode(true);
-    newChild.children[1].innerHTML = branch;
+  // Add Each Branch To The Dropdown List.
+  Array.from(allBranches).forEach((branch) => {
+    var newChild = dropdownItem.cloneNode(true);
     newChild.setAttribute("branch-name", branch);
-    newChild.addEventListener("click", () => {
-      var thisItem = document.querySelector(`[branch-name="${branch}"]`);
+    newChild.children[1].innerHTML = branch;
 
-      if (selectedBranchNames.includes(branch)) {
-        selectedBranchNames = selectedBranchNames.filter((id) => id != branch);
-        thisItem.setAttribute("aria-checked", "false");
-      } else {
-        selectedBranchNames.push(branch);
-        thisItem.setAttribute("aria-checked", "true");
-      }
-      if (branches.length == selectedBranchNames.length) {
-        branchesContainer.children[0].setAttribute("aria-checked", "true");
-      } else {
-        branchesContainer.children[0].setAttribute("aria-checked", "false");
-      }
+    newChild.addEventListener("click", () => {
+      const isSelected = (branch) => selectedBranches.includes(branch);
+      const allSelected = (selectedBranches) => allBranches.length == selectedBranches.length;
+      isSelected(branch)
+        ? (selectedBranches = selectedBranches.filter((id) => id != branch))
+        : selectedBranches.push(branch);
+      var thisItem = document.querySelector(`[branch-name="${branch}"]`);
+      thisItem.setAttribute("aria-checked", isSelected(branch) ? "false" : "true");
+      dropdownItem.setAttribute("aria-checked", allSelected(selectedBranches) ? "true" : "false");
     });
+
     branchesContainer.appendChild(newChild);
   });
 
-  // Action for the "All branches" button
-  branchesContainer.children[0].addEventListener("click", () => {
-    if (branchesContainer.children[0].getAttribute("aria-checked") == "true") {
-      selectedBranchNames = [];
-      Array.from(branchesContainer.children).forEach((child) => {
-        child.setAttribute("aria-checked", "false");
-      });
+  // Action For The Button: "All Branches"
+  dropdownItem.addEventListener("click", () => {
+    var dropdownItems = Array.from(branchesContainer.children);
+
+    if (dropdownItem.getAttribute("aria-checked") == "true") {
+      // Toggle All To False
+      selectedBranches = [];
+      dropdownItems.forEach((branchButton) => branchButton.setAttribute("aria-checked", "false"));
     } else {
-      selectedBranchNames = [];
-      var i = 0;
-      Array.from(branchesContainer.children).forEach((child) => {
-        child.setAttribute("aria-checked", "true");
+      // Toggle 'All' To True If Selected / Matching Outer Container Names
+      selectedBranches = [];
+      dropdownItems.forEach((branchButton, i) => {
+        branchButton.setAttribute("aria-checked", "true");
         if (i != 0 && branchesContainer.children[i].getAttribute("branch-name") != null) {
-          selectedBranchNames.push(child.getAttribute("branch-name"));
+          selectedBranches.push(branchButton.getAttribute("branch-name"));
         }
-        i += 1;
       });
     }
   });
+
   var sizedContainer = document.getElementById("branches-sized-container");
-  sizedContainer.style.height = 35 * branches.length + 45 + "px";
-}
+  sizedContainer.style.height = 35 * allBranches.length + 45 + "px";
+};

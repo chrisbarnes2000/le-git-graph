@@ -1,43 +1,56 @@
 {
-  "name": "Le Git Graph - Commits Graph for GitHub",
-  "description": "A browser extension that displays the git graph for any GitHub repository.",
-  "version": "1.0.3.1",
+  "version": "1.0.3.202",
   "manifest_version": 3,
+  "name": "Le Git Graph - Commits Graph for GitHub",
+  "description": "This extension displays the GitGraph for any GitHub repository.",
+  "background": { "service_worker": "js/serviceWorker.js" },
+  "permissions": ["tabs"],
   "content_scripts": [
+    {
+      "matches": ["*://*.scaria.dev/github-tree-graph/authorize/"],
+      "js": ["js/authorization/authProcess.js"],
+      "run_at": "document_end"
+    },
     {
       "matches": ["*://*.github.com/*"],
       "js": [
-        "js/authorization/addAuthorizationPrompt.js",
-        "js/authorization/getLocalToken.js",
         "js/authorization/oauth2.js",
+        "js/authorization/addAuthorizationPrompt.js",
 
-        "js/commits/drawGraph.js",
-        "js/commits/fetchCommits.js",
-        "js/commits/showCommits.js",
-        "js/commits/showCommitsLoading.js",
-        "js/commits/sortCommits.js",
+        "js/navigation/repo/addCommitsButton.js",
+        "js/navigation/repo/addLoadMoreButton.js",
 
         "js/navigation/file/loadBranchesButton.js",
         "js/navigation/file/setBranchOptions.js",
         "js/navigation/file/showLegend.js",
 
-        "js/navigation/pagination/addLoadMoreButton.js",
-        "js/navigation/pagination/fetchFurther.js",
+        "js/processing/fetchCommits.js",
+        "js/processing/fetchFurther.js",
+        "js/processing/sortCommits.js",
+        "js/processing/showCommits.js",
 
-        "js/navigation/repo/addCommitsButton.js",
-        "js/navigation/repo/openCommitsTab.js",
+        "js/commits/commitsTab.js",
+        "js/commits/drawGraph.js",
 
+        "js/helpers.js",
         "js/main.js"
       ],
       "run_at": "document_end"
-    },
-    {
-      "matches": ["*://*.scaria.dev/github-tree-graph/authorize/"],
-      "js": ["js/authorization/authProcess.js"],
-      "run_at": "document_end"
     }
   ],
-  "permissions": ["tabs"],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "images/popup.png",
+        "html/branchSelection.html",
+        "html/authorizationPrompt.html",
+        "html/commitsLoading.html",
+        "html/commitsContainer.html",
+        "html/commitItem.html"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "action": {
     "default_icon": {
       "16": "/images/le_git_graph16.png",
@@ -53,21 +66,5 @@
     "32": "/images/le_git_graph32.png",
     "48": "/images/le_git_graph48.png",
     "128": "/images/le_git_graph128.png"
-  },
-  "background": {
-    "service_worker": "js/serviceWorker.js"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "images/popup.png",
-        "html/branchSelection.html",
-        "html/authorizationPrompt.html",
-        "html/commitsLoading.html",
-        "html/commitsContainer.html",
-        "html/commitItem.html"
-      ],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }

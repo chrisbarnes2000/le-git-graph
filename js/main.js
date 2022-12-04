@@ -4,13 +4,8 @@
 // Hence every other function/service is called only if the user clicks on the button.
 
 // The commits button is to be added on all repositories.
-// Trying to filter out github's reserved pages, like login. (Veryyyy incomplete. Github has many more URLs.)
+// Trying to filter out github's reserved pages, like login. (Incomplete: Github has many more URLs.)
 
 var pathsToExclude = ["login", "oauth", "authorize"];
-var windowUrlLink = window.location.href;
-var windowUrl = new URL(windowUrlLink);
-var windowPath = windowUrl.pathname;
-var windowPathArray = windowPath.split("/");
-if (pathsToExclude.includes(windowPathArray[1]) == false) {
-  addCommitsButton();
-}
+var currentPath = new URL(window.location.href).pathname.split("/")[1];
+if (pathsToExclude.includes(currentPath) == false) addCommitsButton();
